@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Briefen - AI that makes your links speak{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero">
+        <span class="tagline">✨ AI-Powered Link Intelligence</span>
+        <h1>
+            Stop sharing <span class="gradient-text">cryptic links</span>.<br>
+            Make them speak.
+        </h1>
+        <p>Briefen creates smart, readable short URLs by analyzing your content with AI. Get meaningful links that your audience will trust.</p>
+    </div>
+
+    <div class="shortener-form" role="search">
+        <label for="url-input" class="visually-hidden">Enter URL to shorten</label>
+        <input
+            type="url"
+            id="url-input"
+            placeholder="Paste your long URL here..."
+            aria-label="Enter URL to shorten"
+            aria-describedby="url-input-hint"
+            required
+        >
+        <span id="url-input-hint" class="visually-hidden">Paste a long URL to generate a smart, readable short link</span>
+        <button type="button" id="generate-btn" aria-label="Generate smart short links from URL">✨ Generate Smart Links</button>
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <div class="expiration-section">
+        <label>Link Expiration <span class="optional-label">(optional)</span></label>
+        <div class="expiration-presets">
+            <button type="button" class="preset-btn preset-none active" data-days="0">No expiration</button>
+            <button type="button" class="preset-btn" data-days="1">1 day</button>
+            <button type="button" class="preset-btn" data-days="7">7 days</button>
+            <button type="button" class="preset-btn" data-days="30">30 days</button>
+            <button type="button" class="preset-btn" data-days="90">90 days</button>
+        </div>
+        <div class="expiration-custom">
+            <label for="custom-expiry">Set expiration date &amp; time:</label>
+            <input type="datetime-local" id="custom-expiry" />
+        </div>
+        <input type="hidden" id="expires-at" value="" />
+    </div>
+    {% endif %}
+
+    <div id="progress-section" class="hidden" role="status" aria-live="polite" aria-atomic="true">
+        <div class="progress-messages">
+            <p id="status-message">Processing...</p>
+        </div>
+    </div>
+
+    <div id="options-section" class="hidden" role="region" aria-labelledby="options-heading">
+        <h3 id="options-heading">Choose your preferred short link:</h3>
+        <div id="slug-options" class="slug-options" role="radiogroup" aria-label="Available short link options">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+        <button type="button" id="create-btn" class="hidden" aria-label="Create selected short link">Create Short Link</button>
+    </div>
+
+    <div id="result-section" class="hidden" role="region" aria-labelledby="result-heading" aria-live="polite">
+        <div class="result-card">
+            <h3 id="result-heading">Your Short Link is Ready!</h3>
+            <div class="short-url-display">
+                <input type="text" id="short-url-result" readonly aria-label="Generated short URL">
+                <button type="button" id="copy-btn" aria-label="Copy short URL to clipboard">Copy</button>
+            </div>
+            <p class="original-url">Original: <span id="original-url"></span></p>
+
+            <!-- Inline edit section (hidden by default) -->
+            <div id="edit-section" class="edit-section hidden">
+                <label for="edit-slug-input">Edit your slug:</label>
+                <div class="edit-input-group">
+                    <input type="text" id="edit-slug-input" placeholder="your-custom-slug" pattern="[a-z0-9-]+" maxlength="50">
+                    <button type="button" id="save-slug-btn" class="btn-primary">Save</button>
+                    <button type="button" id="cancel-edit-btn" class="btn-secondary">Cancel</button>
+                </div>
+                <small class="edit-hint">Only lowercase letters, numbers, and hyphens allowed</small>
+            </div>
+
+            <div class="result-actions">
+                <button type="button" id="edit-slug-btn" class="btn-secondary hidden">Edit Slug</button>
+                <button type="button" id="create-another">Create Another</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/shortener.js') }}"></script>
+{% endblock %}
